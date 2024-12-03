@@ -1,12 +1,11 @@
 import './App.css'
-import LandingPage from './Components/Landingpage';
 import FeedbackAndReviews from "./Components/review";
+import VideoPlayer from "./Components/VideoPlayer"
 
 function App() {
   return (
     <div>
-    <LandingPage />
-      {/* <FeedbackAndReviews /> */}
+      <FeedbackAndReviews />
     </div>
   );
 }
