@@ -5,7 +5,8 @@ import VideoPlayer from "./Components/VideoPlayer/VideoPlayer"
 function App() {
   return (
     <div>
-      <FeedbackAndReviews />
+      {/* <FeedbackAndReviews /> */}
+      <VideoPlayer />
     </div>
   );
 }
