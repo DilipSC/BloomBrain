@@ -1,16 +1,14 @@
-'use client';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-export default function WorkInfo() {
+const WorkInfo = () => {
   const [workInfo, setWorkInfo] = useState({
     workType: '',
     role: '',
     companySize: '',
     learningGoal: '',
   });
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,7 +18,7 @@ export default function WorkInfo() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Work Information submitted:', workInfo);
-    router.push('/preferences/learning-goals');
+    navigate('/preferences/learning-goals');
   };
 
   return (
@@ -90,5 +88,7 @@ export default function WorkInfo() {
       </form>
     </div>
   );
-}
+};
+
+export default WorkInfo;
 

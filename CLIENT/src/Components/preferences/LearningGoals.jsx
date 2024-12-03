@@ -1,13 +1,11 @@
-'use client';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-export default function LearningGoals() {
+const LearningGoals = () => {
   const [learningGoals, setLearningGoals] = useState({
     whyHere: '',
   });
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,7 +15,7 @@ export default function LearningGoals() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Learning Goals submitted:', learningGoals);
-    router.push('/preferences/course-preferences');
+    navigate('/preferences/course-preferences');
   };
 
   return (
@@ -50,5 +48,7 @@ export default function LearningGoals() {
       </form>
     </div>
   );
-}
+};
+
+export default LearningGoals;
 

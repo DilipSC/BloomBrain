@@ -1,15 +1,13 @@
-'use client';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-export default function LearningStyle() {
+const LearningStyle = () => {
   const [preferences, setPreferences] = useState({
     learningPace: '',
     assessmentType: [],
     learningAids: [],
   });
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -28,7 +26,7 @@ export default function LearningStyle() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Learning Style Preferences submitted:', preferences);
-    router.push('/preferences/communication');
+    navigate('/preferences/communication');
   };
 
   return (
@@ -95,5 +93,7 @@ export default function LearningStyle() {
       </form>
     </div>
   );
-}
+};
+
+export default LearningStyle;
 

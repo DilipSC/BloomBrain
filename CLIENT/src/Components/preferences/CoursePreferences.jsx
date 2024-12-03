@@ -1,16 +1,14 @@
-'use client';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-export default function CoursePreferences() {
+const CoursePreferences = () => {
   const [preferences, setPreferences] = useState({
     topicsOfInterest: [],
     skillLevel: '',
     courseFormat: [],
     preferredDuration: '',
   });
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -29,7 +27,7 @@ export default function CoursePreferences() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Course Preferences submitted:', preferences);
-    router.push('/preferences/language-accessibility');
+    navigate('/preferences/language-accessibility');
   };
 
   return (
@@ -112,6 +110,7 @@ export default function CoursePreferences() {
         </button>
       </form>
     </div>
-  );
-}
+  );};
+
+export default CoursePreferences;
 

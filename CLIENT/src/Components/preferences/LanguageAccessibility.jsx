@@ -1,14 +1,12 @@
-'use client';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-export default function LanguageAccessibility() {
+const LanguageAccessibility = () => {
   const [preferences, setPreferences] = useState({
     preferredLanguage: 'English',
     accessibilityOptions: [],
   });
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -27,7 +25,7 @@ export default function LanguageAccessibility() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Language and Accessibility Preferences submitted:', preferences);
-    router.push('/preferences/learning-style');
+    navigate('/preferences/learning-style');
   };
 
   return (
@@ -76,5 +74,7 @@ export default function LanguageAccessibility() {
       </form>
     </div>
   );
-}
+};
+
+export default LanguageAccessibility;
 

@@ -1,14 +1,12 @@
-'use client';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-export default function Payment() {
+const Payment = () => {
   const [preferences, setPreferences] = useState({
     paymentMethod: '',
     subscriptionModel: '',
   });
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,7 +16,7 @@ export default function Payment() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Payment Preferences submitted:', preferences);
-    router.push('/preferences/social-engagement');
+    navigate('/preferences/social-engagement');
   };
 
   return (
@@ -68,5 +66,7 @@ export default function Payment() {
       </form>
     </div>
   );
-}
+};
+
+export default Payment;
 

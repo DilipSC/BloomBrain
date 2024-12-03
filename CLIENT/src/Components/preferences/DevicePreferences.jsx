@@ -1,14 +1,12 @@
-'use client';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-export default function DevicePreferences() {
+const DevicePreferences = () => {
   const [preferences, setPreferences] = useState({
     primaryDevice: '',
     offlineAccess: false,
   });
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -22,9 +20,7 @@ export default function DevicePreferences() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Device Preferences submitted:', preferences);
-    // Here you would typically send all collected preferences to your backend
-    // For now, we'll just log them and redirect to a thank you page
-    router.push('/preferences/thank-you');
+    navigate('/preferences/thank-you');
   };
 
   return (
@@ -71,5 +67,7 @@ export default function DevicePreferences() {
       </form>
     </div>
   );
-}
+};
+
+export default DevicePreferences;
 

@@ -1,19 +1,17 @@
-'use client';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-export default function SocialEngagement() {
+const Communication = () => {
   const [preferences, setPreferences] = useState({
-    interactionLevel: [],
-    instructorFeedback: false,
+    notifications: [],
+    newsletter: false,
   });
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === 'checkbox') {
-      if (name === 'instructorFeedback') {
+      if (name === 'newsletter') {
         setPreferences(prev => ({ ...prev, [name]: checked }));
       } else {
         setPreferences(prev => ({
@@ -28,43 +26,43 @@ export default function SocialEngagement() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Social and Engagement Preferences submitted:', preferences);
-    router.push('/preferences/device-preferences');
+    console.log('Communication Preferences submitted:', preferences);
+    navigate('/preferences/payment');
   };
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-white mb-6">Social and Engagement</h1>
+      <h1 className="text-3xl font-bold text-white mb-6">Communication Preferences</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-white mb-2">Interaction Level</label>
-          {['Enable Discussion Forums', 'Participate in Peer Reviews', 'Join Group Projects'].map((interaction) => (
-            <div key={interaction} className="flex items-center mb-2">
+          <label className="block text-white mb-2">Notifications</label>
+          {['Course Updates', 'Assignment Reminders', 'Promotional Offers'].map((notification) => (
+            <div key={notification} className="flex items-center mb-2">
               <input
                 type="checkbox"
-                id={`interaction-${interaction}`}
-                name="interactionLevel"
-                value={interaction}
-                checked={preferences.interactionLevel.includes(interaction)}
+                id={`notification-${notification}`}
+                name="notifications"
+                value={notification}
+                checked={preferences.notifications.includes(notification)}
                 onChange={handleChange}
                 className="mr-2"
               />
-              <label htmlFor={`interaction-${interaction}`} className="text-white">{interaction}</label>
+              <label htmlFor={`notification-${notification}`} className="text-white">{notification}</label>
             </div>
           ))}
         </div>
         <div>
-          <label className="block text-white mb-2">Instructor Feedback</label>
+          <label className="block text-white mb-2">Newsletter Subscription</label>
           <div className="flex items-center mb-2">
             <input
               type="checkbox"
-              id="instructorFeedback"
-              name="instructorFeedback"
-              checked={preferences.instructorFeedback}
+              id="newsletter"
+              name="newsletter"
+              checked={preferences.newsletter}
               onChange={handleChange}
               className="mr-2"
             />
-            <label htmlFor="instructorFeedback" className="text-white">I want direct feedback from instructors</label>
+            <label htmlFor="newsletter" className="text-white">Yes, send me updates and tips</label>
           </div>
         </div>
         <button
@@ -76,5 +74,7 @@ export default function SocialEngagement() {
       </form>
     </div>
   );
-}
+};
+
+export default Communication;
 
