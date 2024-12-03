@@ -30,7 +30,25 @@ const FeedbackAndReviews = () => {
     feedback: "",
   });
 
-  const reactions = ["😀", "🙂", "😐", "☹️", "😡"];
+  const reactions = ["😡", "☹️", "😐", "🙂", "😀"];
+
+  const handlePreTextFill = (reaction) => {
+    const reactionFeedbackMap = {
+      "😀": "I'm thrilled with this experience!",
+      "🙂": "I'm quite satisfied with this.",
+      "😐": "It's okay, nothing special.",
+      "☹️": "I'm disappointed and expected better.",
+      "😡": "This was a frustrating experience.",
+    };
+
+    setNewReview({
+      ...newReview,
+      feedback: reactionFeedbackMap[reaction] || "", // Default to empty if reaction isn't mapped
+    });
+  };
+
+
+  
 
   // Fetch reviews from Firestore
   useEffect(() => {
@@ -115,17 +133,20 @@ const FeedbackAndReviews = () => {
         </div>
 
         <div className="space-y-2">
-          <p className="text-gray-600 font-medium">Reaction:</p>
-          <div className="flex gap-4">
+          <p className="text-gray-600 font-medium text-center">Reaction:</p>
+          <div className="flex justify-center gap-4">
             {reactions.map((reaction, index) => (
               <span
                 key={index}
-                className={`text-2xl cursor-pointer transition-transform transform ${
+                className={`text-2xl cursor-pointer transition-transform transform hover:scale-150 ${
                   newReview.reaction === reaction
                     ? "scale-125 text-green-500"
                     : "text-gray-500"
                 }`}
-                onClick={() => handleReactionClick(reaction)}
+                onClick={() => {
+                  handleReactionClick(reaction);
+                  handlePreTextFill(reaction); // Call function to fill pre-text
+                }}
               >
                 {reaction}
               </span>
@@ -140,31 +161,32 @@ const FeedbackAndReviews = () => {
               name="feedback"
               value={newReview.feedback}
               onChange={handleInputChange}
-              rows="4"
+              rows="2" // Smaller height
               className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
             ></textarea>
           </label>
         </div>
 
         {/* Buttons */}
-        <div className="flex gap-4">
+        <div className="flex justify-center gap-4 mt-4">
           <button
             type="submit"
-            className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition"
+            onClick={handleSubmit}
+            className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition transform hover:scale-105 focus:ring-2 focus:ring-green-300"
           >
             Submit
           </button>
           <button
             type="button"
             onClick={handleReset}
-            className="px-4 py-2 bg-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-400 transition"
+            className="px-4 py-2 bg-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-400 transition transform hover:scale-105 focus:ring-2 focus:ring-gray-300"
           >
             Reset
           </button>
           <button
             type="button"
             onClick={handleSaveAsDraft}
-            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition"
+            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition transform hover:scale-105 focus:ring-2 focus:ring-blue-300"
           >
             Save as Draft
           </button>
