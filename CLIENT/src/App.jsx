@@ -1,7 +1,7 @@
 import './App.css'
 import LandingPage from './Components/LandingPage/LandingPage';
 import FeedbackAndReviews from "./Components/review";
-import VideoPlayer from "./Components/VideoPlayer"
+import VideoPlayer from "./Components/VideoPlayer/VideoPlayer"
 
 function App() {
   return (
