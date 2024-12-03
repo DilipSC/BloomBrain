@@ -26,9 +26,11 @@ const FeedbackAndReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({
     name: "",
-    rating: "",
+    reaction: "",
     feedback: "",
   });
+
+  const reactions = ["😀", "🙂", "😐", "☹️", "😡"];
 
   // Fetch reviews from Firestore
   useEffect(() => {
@@ -41,100 +43,132 @@ const FeedbackAndReviews = () => {
     fetchReviews();
   }, []);
 
-  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewReview({ ...newReview, [name]: value });
   };
 
-  // Handle form submission
+  const handleReactionClick = (reaction) => {
+    setNewReview({ ...newReview, reaction });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (newReview.name && newReview.rating && newReview.feedback) {
+    if (newReview.name && newReview.reaction && newReview.feedback) {
       const reviewsCollection = collection(db, "reviews");
       await addDoc(reviewsCollection, {
         ...newReview,
         timestamp: serverTimestamp(),
       });
       setReviews([...reviews, newReview]);
-      setNewReview({ name: "", rating: "", feedback: "" });
+      setNewReview({ name: "", reaction: "", feedback: "" });
     } else {
       alert("Please fill out all fields!");
     }
   };
 
+  const handleReset = () => {
+    setNewReview({ name: "", reaction: "", feedback: "" });
+  };
+
+  const handleSaveAsDraft = () => {
+    alert("Saved as draft! (Local save functionality can be added)");
+  };
+
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
-      <h2>Feedback and Reviews</h2>
-      <div>
+    <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 space-y-6">
+      <h2 className="text-3xl font-semibold text-green-600 text-center">
+        Feedback and Reviews
+      </h2>
+
+      {/* Reviews Section */}
+      <div className="space-y-4">
         {reviews.map((review, index) => (
           <div
             key={index}
-            style={{
-              border: "1px solid #ddd",
-              padding: "10px",
-              marginBottom: "10px",
-              borderRadius: "5px",
-            }}
+            className="p-4 border border-gray-200 rounded-lg bg-gray-50"
           >
-            <h3>{review.name}</h3>
-            <p>Rating: {"⭐".repeat(review.rating)}</p>
-            <p>{review.feedback}</p>
+            <h3 className="font-bold text-lg text-gray-800">{review.name}</h3>
+            <p className="text-xl my-2">Reaction: {review.reaction}</p>
+            <p className="text-gray-700">{review.feedback}</p>
           </div>
         ))}
       </div>
-      <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
-        <h3>Leave Your Feedback</h3>
-        <div>
-          <label>
+
+      {/* Form Section */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <h3 className="text-2xl font-semibold text-gray-700">
+          Leave Your Feedback
+        </h3>
+
+        <div className="space-y-2">
+          <label className="block text-gray-600 font-medium">
             Name:
             <input
               type="text"
               name="name"
               value={newReview.name}
               onChange={handleInputChange}
-              style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
             />
           </label>
         </div>
-        <div>
-          <label>
-            Rating (1-5):
-            <input
-              type="number"
-              name="rating"
-              min="1"
-              max="5"
-              value={newReview.rating}
-              onChange={handleInputChange}
-              style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
-            />
-          </label>
+
+        <div className="space-y-2">
+          <p className="text-gray-600 font-medium">Reaction:</p>
+          <div className="flex gap-4">
+            {reactions.map((reaction, index) => (
+              <span
+                key={index}
+                className={`text-2xl cursor-pointer transition-transform transform ${
+                  newReview.reaction === reaction
+                    ? "scale-125 text-green-500"
+                    : "text-gray-500"
+                }`}
+                onClick={() => handleReactionClick(reaction)}
+              >
+                {reaction}
+              </span>
+            ))}
+          </div>
         </div>
-        <div>
-          <label>
+
+        <div className="space-y-2">
+          <label className="block text-gray-600 font-medium">
             Feedback:
             <textarea
               name="feedback"
               value={newReview.feedback}
               onChange={handleInputChange}
               rows="4"
-              style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
             ></textarea>
           </label>
         </div>
-        <button
-          type="submit"
-          style={{
-            padding: "10px 20px",
-            background: "#007BFF",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-          }}
-        >
-          Submit
-        </button>
+
+        {/* Buttons */}
+        <div className="flex gap-4">
+          <button
+            type="submit"
+            className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition"
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="px-4 py-2 bg-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-400 transition"
+          >
+            Reset
+          </button>
+          <button
+            type="button"
+            onClick={handleSaveAsDraft}
+            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition"
+          >
+            Save as Draft
+          </button>
+        </div>
       </form>
     </div>
   );
