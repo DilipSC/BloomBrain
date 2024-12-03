@@ -4,10 +4,13 @@ import VideoPlayer from "./Components/Students/VideoPlayer/VideoPlayer"
 //import InstructorDashboard from './Components/InstructorDashboard/InstructorDashboard';
 // import UserDashboard from './Components/Students/Dashboard/UserDashboard';
 // import Profile from './Components/Students/Dashboard/UserProfile'
+// import Review from './Components/review';
+//import Dash from './Components/Students/Dashboard/UserDash';
+  // import Dash from './Components/Students/Dashboard/Settings';
 function App() {
   return (
     <div>
-      <FeedbackAndReviews />
+      <VideoPlayer />
     </div>
   );
 }
