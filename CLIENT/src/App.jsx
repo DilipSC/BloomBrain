@@ -1,29 +1,3 @@
-<<<<<<< HEAD
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./Components/LiveClass/Homepage";
-import LiveStreaming from "./Components/LiveClass/LiveStreaming";
-import StartStream from "./Components/LiveClass/StartStream";
-
-const App = () => {
-  return (
-    <Router>
-      <div>
-        {/* Navigation Bar (Optional) */}
-        <nav>
-          <a href="/">Home</a> | <a href="/start-stream">Start Stream</a> |{" "}
-          <a href="/live/1">Live Streaming</a>
-        </nav>
-
-        {/* Define Routes */}
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/start-stream" element={<StartStream />} />
-          <Route path="/live/:id" element={<LiveStreaming />} />
-        </Routes>
-      </div>
-    </Router>
-=======
 
 // import FeedbackAndReviews from "./Components/review";
 import VideoPlayer from "./Components/Students/VideoPlayer/VideoPlayer"
@@ -38,13 +12,10 @@ function App() {
     <div>
       <VideoPlayer />
     </div>
->>>>>>> 447478317ac000c77adbd75eee170b05f00d9194
   );
 };
 
 export default App;
-<<<<<<< HEAD
-=======
 
 // import React from 'react';
 // import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -89,4 +60,3 @@ export default App;
 
 
 
->>>>>>> 447478317ac000c77adbd75eee170b05f00d9194
