@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { initializeApp } from "firebase/app";
 import {
   getFirestore,
@@ -10,17 +11,27 @@ import {
 
 // Firebase configuration (replace with your Firebase config)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  apiKey: "AIzaSyCY-L2PDawMFd9rYaMUE4DZIWvuIKprx7M",
+  authDomain: "bloom-brain.firebaseapp.com",
+  projectId: "bloom-brain",
+  storageBucket: "bloom-brain.firebasestorage.app",
+  messagingSenderId: "252418327612",
+  appId: "1:252418327612:web:5df2e8e8d28c198330ef39"
 };
 
 // Initialize Firebase and Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+const reactions = ["😡", "☹️", "😐", "🙂", "😀"];
+
+const reactionFeedbackMap = {
+  "😀": "I'm thrilled with this experience!",
+  "🙂": "I'm quite satisfied with this.",
+  "😐": "It's okay, nothing special.",
+  "☹️": "I'm disappointed and expected better.",
+  "😡": "This was a frustrating experience.",
+};
 
 const FeedbackAndReviews = () => {
   const [reviews, setReviews] = useState([]);
@@ -29,36 +40,26 @@ const FeedbackAndReviews = () => {
     reaction: "",
     feedback: "",
   });
+  const [drafts, setDrafts] = useState([]);
+  const [toast, setToast] = useState(null);
 
-  const reactions = ["😡", "☹️", "😐", "🙂", "😀"];
-
-  const handlePreTextFill = (reaction) => {
-    const reactionFeedbackMap = {
-      "😀": "I'm thrilled with this experience!",
-      "🙂": "I'm quite satisfied with this.",
-      "😐": "It's okay, nothing special.",
-      "☹️": "I'm disappointed and expected better.",
-      "😡": "This was a frustrating experience.",
-    };
-
-    setNewReview({
-      ...newReview,
-      feedback: reactionFeedbackMap[reaction] || "", // Default to empty if reaction isn't mapped
-    });
-  };
-
-
-  
-
-  // Fetch reviews from Firestore
   useEffect(() => {
     const fetchReviews = async () => {
       const reviewsCollection = collection(db, "reviews");
       const reviewsSnapshot = await getDocs(reviewsCollection);
-      const reviewsList = reviewsSnapshot.docs.map((doc) => doc.data());
+      const reviewsList = reviewsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       setReviews(reviewsList);
     };
     fetchReviews();
+
+    // Load drafts from localStorage
+    const savedDrafts = localStorage.getItem("reviewDrafts");
+    if (savedDrafts) {
+      setDrafts(JSON.parse(savedDrafts));
+    }
   }, []);
 
   const handleInputChange = (e) => {
@@ -67,21 +68,31 @@ const FeedbackAndReviews = () => {
   };
 
   const handleReactionClick = (reaction) => {
-    setNewReview({ ...newReview, reaction });
+    setNewReview({
+      ...newReview,
+      reaction,
+      feedback: reactionFeedbackMap[reaction] || "",
+    });
+  };
+
+  const showToast = (title, description, isError = false) => {
+    setToast({ title, description, isError });
+    setTimeout(() => setToast(null), 3000);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (newReview.name && newReview.reaction && newReview.feedback) {
       const reviewsCollection = collection(db, "reviews");
-      await addDoc(reviewsCollection, {
+      const docRef = await addDoc(reviewsCollection, {
         ...newReview,
         timestamp: serverTimestamp(),
       });
-      setReviews([...reviews, newReview]);
+      setReviews([...reviews, { id: docRef.id, ...newReview }]);
       setNewReview({ name: "", reaction: "", feedback: "" });
+      showToast("Review submitted", "Thank you for your feedback!");
     } else {
-      alert("Please fill out all fields!");
+      showToast("Error", "Please fill out all fields!", true);
     }
   };
 
@@ -90,7 +101,22 @@ const FeedbackAndReviews = () => {
   };
 
   const handleSaveAsDraft = () => {
-    alert("Saved as draft! (Local save functionality can be added)");
+    if (newReview.name || newReview.reaction || newReview.feedback) {
+      const updatedDrafts = [...drafts, { ...newReview, id: Date.now() }];
+      setDrafts(updatedDrafts);
+      localStorage.setItem("reviewDrafts", JSON.stringify(updatedDrafts));
+      setNewReview({ name: "", reaction: "", feedback: "" });
+      showToast("Draft saved", "Your review has been saved as a draft.");
+    } else {
+      showToast("Error", "Cannot save an empty draft!", true);
+    }
+  };
+
+  const loadDraft = (draft) => {
+    setNewReview(draft);
+    const updatedDrafts = drafts.filter((d) => d.id !== draft.id);
+    setDrafts(updatedDrafts);
+    localStorage.setItem("reviewDrafts", JSON.stringify(updatedDrafts));
   };
 
   return (
@@ -100,18 +126,22 @@ const FeedbackAndReviews = () => {
       </h2>
 
       {/* Reviews Section */}
-      <div className="space-y-4">
-        {reviews.map((review, index) => (
-          <div
-            key={index}
-            className="p-4 border border-gray-200 rounded-lg bg-gray-50"
+      <AnimatePresence>
+        {reviews.map((review) => (
+          <motion.div
+            key={review.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4"
           >
-            <h3 className="font-bold text-lg text-gray-800">{review.name}</h3>
-            <p className="text-xl my-2">Reaction: {review.reaction}</p>
+            <h3 className="text-xl font-semibold mb-2">{review.name}</h3>
+            <p className="text-xl mb-2">Reaction: {review.reaction}</p>
             <p className="text-gray-700">{review.feedback}</p>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </AnimatePresence>
 
       {/* Form Section */}
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -120,80 +150,124 @@ const FeedbackAndReviews = () => {
         </h3>
 
         <div className="space-y-2">
-          <label className="block text-gray-600 font-medium">
+          <label htmlFor="name" className="block text-gray-600 font-medium">
             Name:
-            <input
-              type="text"
-              name="name"
-              value={newReview.name}
-              onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-            />
           </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={newReview.name}
+            onChange={handleInputChange}
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
         </div>
 
         <div className="space-y-2">
           <p className="text-gray-600 font-medium text-center">Reaction:</p>
           <div className="flex justify-center gap-4">
-            {reactions.map((reaction, index) => (
-              <span
-                key={index}
-                className={`text-2xl cursor-pointer transition-transform transform hover:scale-150 ${
+            {reactions.map((reaction) => (
+              <motion.button
+                key={reaction}
+                type="button"
+                className={`text-2xl ${
                   newReview.reaction === reaction
-                    ? "scale-125 text-green-500"
+                    ? "text-green-500"
                     : "text-gray-500"
                 }`}
-                onClick={() => {
-                  handleReactionClick(reaction);
-                  handlePreTextFill(reaction); // Call function to fill pre-text
-                }}
+                onClick={() => handleReactionClick(reaction)}
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
               >
                 {reaction}
-              </span>
+              </motion.button>
             ))}
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="block text-gray-600 font-medium">
+          <label htmlFor="feedback" className="block text-gray-600 font-medium">
             Feedback:
-            <textarea
-              name="feedback"
-              value={newReview.feedback}
-              onChange={handleInputChange}
-              rows="2" // Smaller height
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-            ></textarea>
           </label>
+          <textarea
+            id="feedback"
+            name="feedback"
+            value={newReview.feedback}
+            onChange={handleInputChange}
+            rows="2"
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+          ></textarea>
         </div>
 
         {/* Buttons */}
         <div className="flex justify-center gap-4 mt-4">
           <button
             type="submit"
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition transform hover:scale-105 focus:ring-2 focus:ring-green-300"
+            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
           >
             Submit
           </button>
           <button
             type="button"
             onClick={handleReset}
-            className="px-4 py-2 bg-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-400 transition transform hover:scale-105 focus:ring-2 focus:ring-gray-300"
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             Reset
           </button>
           <button
             type="button"
             onClick={handleSaveAsDraft}
-            className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition transform hover:scale-105 focus:ring-2 focus:ring-blue-300"
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Save as Draft
           </button>
         </div>
       </form>
+
+      {/* Drafts Section */}
+      {drafts.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-2xl font-semibold text-gray-700 mb-4">Drafts</h3>
+          <div className="space-y-4">
+            {drafts.map((draft) => (
+              <motion.div
+                key={draft.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="bg-white border border-gray-200 rounded-lg p-4 flex justify-between items-center"
+              >
+                <div>
+                  <p className="font-medium">{draft.name || "Unnamed"}</p>
+                  <p>{draft.reaction} {draft.feedback}</p>
+                </div>
+                <button
+                  onClick={() => loadDraft(draft)}
+                  className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+                >
+                  Load
+                </button>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          className={`fixed bottom-4 right-4 p-4 rounded-md ${
+            toast.isError ? "bg-red-500" : "bg-green-500"
+          } text-white`}
+        >
+          <h4 className="font-semibold">{toast.title}</h4>
+          <p>{toast.description}</p>
+        </div>
+      )}
     </div>
   );
 };
 
 export default FeedbackAndReviews;
+

@@ -1,10 +1,12 @@
 import './App.css'
+import LandingPage from './Components/Landingpage';
 import FeedbackAndReviews from "./Components/review";
 
 function App() {
   return (
     <div>
-      <FeedbackAndReviews />
+    <LandingPage />
+      {/* <FeedbackAndReviews /> */}
     </div>
   );
 }
