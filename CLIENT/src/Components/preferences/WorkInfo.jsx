@@ -21,6 +21,8 @@ const WorkInfo = () => {
     navigate('/preferences/learning-goals');
   };
 
+  console.log("WorkInfo component rendered"); // Debugging line
+
   return (
     <div>
       <h1 className="text-3xl font-bold text-white mb-6">Work Information</h1>
@@ -91,4 +93,3 @@ const WorkInfo = () => {
 };
 
 export default WorkInfo;
-
