@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Use useNavigate instead of useHistory
 
 const SignUpForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
+    userType: 'student', // default value
   });
+
+  const navigate = useNavigate(); // Initialize the navigate function
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,6 +20,13 @@ const SignUpForm = () => {
     e.preventDefault();
     console.log('Form submitted:', formData);
     alert('Form submitted successfully!');
+    
+    // Navigate based on user type
+    if (formData.userType === 'student') {
+      navigate('/student-dashboard'); // Use navigate() instead of history.push()
+    } else {
+      navigate('/tutor-dashboard'); // Use navigate() instead of history.push()
+    }
   };
 
   return (
@@ -59,6 +70,22 @@ const SignUpForm = () => {
           placeholder="Enter your password"
         />
       </div>
+
+      {/* User Type Selection */}
+      <div>
+        <label htmlFor="userType" className="block text-silver mb-2 text-sm font-medium">I am a</label>
+        <select
+          id="userType"
+          name="userType"
+          value={formData.userType}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-silver rounded-lg bg-midnight-light text-silver placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-silver focus:border-transparent"
+        >
+          <option value="student">Student</option>
+          <option value="tutor">Tutor</option>
+        </select>
+      </div>
+
       <button
         type="submit"
         className="w-full py-2 px-4 bg-silver text-midnight font-bold rounded-lg hover:bg-silver-dark hover:text-white transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-silver focus:ring-opacity-50"
