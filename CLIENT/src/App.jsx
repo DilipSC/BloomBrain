@@ -7,11 +7,7 @@ import VideoPlayer from "./Components/Students/VideoPlayer/VideoPlayer"
 function App() {
   return (
     <div>
-      {/* <FeedbackAndReviews /> */}
-      {/* <InstructorDashboard/> */}
-      <VideoPlayer />
-      {/* <UserDashboard /> */}
-      {/* <Profile /> */}
+      <FeedbackAndReviews />
     </div>
   );
 }
