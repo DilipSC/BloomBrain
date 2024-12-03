@@ -1,11 +1,13 @@
 import './App.css'
-import FeedbackAndReviews from "./Components/review";
-import VideoPlayer from "./Components/VideoPlayer"
+//import FeedbackAndReviews from "./Components/review";
+//import LandingPage from './Components/Landingpage';
+import PreferencesPage from './Components/Preference/preferences';
 
 function App() {
   return (
     <div>
-      <FeedbackAndReviews />
+      {/* <LandingPage /> */}
+      <PreferencesPage />
     </div>
   );
 }
