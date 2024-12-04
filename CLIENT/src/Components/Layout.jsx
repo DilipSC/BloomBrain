@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 
 const preferenceSections = [
   { path: '/preferences/work-info', title: 'Work Information' },
@@ -13,7 +13,7 @@ const preferenceSections = [
   { path: '/preferences/device-preferences', title: 'Device Preferences' },
 ];
 
-const Layout = ({ children }) => {
+const Layout = () => {
   const location = useLocation();
 
   return (
@@ -27,7 +27,8 @@ const Layout = ({ children }) => {
       </header>
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto bg-midnight-light bg-opacity-90 backdrop-filter backdrop-blur-lg rounded-lg shadow-xl p-8">
-          {location.pathname !== '/' && (
+          {/* Render navigation links if not on the root path */}
+          {location.pathname.startsWith('/preferences') && (
             <nav className="mb-8">
               <ul className="flex flex-wrap justify-center gap-4">
                 {preferenceSections.map((section) => (
@@ -43,7 +44,8 @@ const Layout = ({ children }) => {
               </ul>
             </nav>
           )}
-          {children}
+          {/* Outlet renders nested child routes */}
+          <Outlet />
         </div>
       </main>
       <footer className="bg-midnight bg-opacity-80 p-4 text-center text-silver text-sm">

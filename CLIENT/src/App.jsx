@@ -1,17 +1,25 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import BroadcasterPage from './Components/LiveRTC/BroadcasterPage'; // Your Home Page component
-import ViewerPage from './Components/LiveRTC/ViewerPage'; // Your Video Page component (for viewing videos)
- // Your Streaming Page component
+<<<<<<< HEAD
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./Components/LiveClass/Homepage";
+import LiveStreaming from "./Components/LiveClass/LiveStreaming";
+import StartStream from "./Components/LiveClass/StartStream";
 
-function App() {
+const App = () => {
   return (
     <Router>
-      <div className="App">
+      <div>
+        {/* Navigation Bar (Optional) */}
+        <nav>
+          <a href="/">Home</a> | <a href="/start-stream">Start Stream</a> |{" "}
+          <a href="/live/1">Live Streaming</a>
+        </nav>
+
+        {/* Define Routes */}
         <Routes>
-         
-          <Route path="/streamer" element={<BroadcasterPage />} />
-          <Route path="/viewer" element={<ViewerPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/start-stream" element={<StartStream />} />
+          <Route path="/live/:id" element={<LiveStreaming />} />
         </Routes>
       </div>
     </Router>
